@@ -2,6 +2,7 @@ const STYLES = {
   active: "bg-emerald-100 text-emerald-700",
   paid: "bg-emerald-100 text-emerald-700",
   approved: "bg-emerald-100 text-emerald-700",
+  verified: "bg-emerald-100 text-emerald-700",
   pending: "bg-amber-100 text-amber-700",
   expired: "bg-rose-100 text-rose-700",
   overdue: "bg-rose-100 text-rose-700",

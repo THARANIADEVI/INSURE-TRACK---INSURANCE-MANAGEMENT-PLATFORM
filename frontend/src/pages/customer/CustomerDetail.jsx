@@ -13,6 +13,8 @@ export default function CustomerDetail() {
   const [editing, setEditing] = useState(false);
   const [form, setForm] = useState(null);
   const [error, setError] = useState("");
+  const [reviewNotes, setReviewNotes] = useState({});
+  const [reviewError, setReviewError] = useState({});
 
   async function load() {
     const { data } = await api.get(`/customers/${id}/history`);
@@ -42,6 +44,16 @@ export default function CustomerDetail() {
     load();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
+
+  async function handleVerify(docId, status) {
+    setReviewError((e) => ({ ...e, [docId]: "" }));
+    try {
+      await api.put(`/documents/${docId}/verify`, { status, review_notes: reviewNotes[docId] || undefined });
+      load();
+    } catch (err) {
+      setReviewError((e) => ({ ...e, [docId]: err.response?.data?.error || "Failed to review document" }));
+    }
+  }
 
   async function handleSave(e) {
     e.preventDefault();
@@ -155,6 +167,7 @@ export default function CustomerDetail() {
                 <th className="py-2">File name</th>
                 <th>Type</th>
                 <th>Uploaded</th>
+                <th>Verification</th>
                 <th></th>
               </tr>
             </thead>
@@ -171,10 +184,37 @@ export default function CustomerDetail() {
                   </td>
                   <td className="capitalize text-brand-700">{d.doc_type}</td>
                   <td className="text-brand-700">{new Date(d.uploaded_at).toLocaleDateString()}</td>
+                  <td>
+                    <Badge status={d.verification_status} />
+                    {d.review_notes && (
+                      <p className="mt-1 max-w-xs truncate text-xs text-brand-500" title={d.review_notes}>
+                        Notes: {d.review_notes}
+                      </p>
+                    )}
+                  </td>
                   <td className="text-right">
-                    <button className="text-brand-600 underline" onClick={() => handleDownload(d)}>
-                      Download
-                    </button>
+                    <div className="flex flex-col items-end gap-1">
+                      <button className="text-brand-600 underline" onClick={() => handleDownload(d)}>
+                        Download
+                      </button>
+                      {d.verification_status === "pending" && (
+                        <div className="flex items-center gap-2">
+                          <input
+                            placeholder="Notes (optional)"
+                            value={reviewNotes[d.id] || ""}
+                            onChange={(e) => setReviewNotes((n) => ({ ...n, [d.id]: e.target.value }))}
+                            className="w-32 rounded border border-brand-200 bg-offwhite px-2 py-1 text-xs outline-none focus:border-brand-500"
+                          />
+                          <button className="text-emerald-600 underline" onClick={() => handleVerify(d.id, "verified")}>
+                            Verify
+                          </button>
+                          <button className="text-rose-600 underline" onClick={() => handleVerify(d.id, "rejected")}>
+                            Reject
+                          </button>
+                        </div>
+                      )}
+                      {reviewError[d.id] && <p className="text-xs text-rose-600">{reviewError[d.id]}</p>}
+                    </div>
                   </td>
                 </tr>
               ))}

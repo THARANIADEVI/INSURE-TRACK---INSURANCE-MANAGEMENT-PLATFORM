@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import api from "../../services/api";
 import Card from "../../components/Card";
 import Button from "../../components/Button";
+import Badge from "../../components/Badge";
 import FormField, { Select } from "../../components/FormField";
 
 export default function MyDocuments() {
@@ -77,6 +78,7 @@ export default function MyDocuments() {
             <th className="py-2">File name</th>
             <th>Type</th>
             <th>Uploaded</th>
+            <th>Verification</th>
             <th></th>
           </tr>
         </thead>
@@ -93,6 +95,14 @@ export default function MyDocuments() {
               </td>
               <td className="capitalize text-brand-700">{d.doc_type}</td>
               <td className="text-brand-700">{new Date(d.uploaded_at).toLocaleDateString()}</td>
+              <td>
+                <Badge status={d.verification_status} />
+                {d.review_notes && (
+                  <p className="mt-1 max-w-xs truncate text-xs text-brand-500" title={d.review_notes}>
+                    Notes: {d.review_notes}
+                  </p>
+                )}
+              </td>
               <td className="text-right">
                 <button className="text-brand-600 underline" onClick={() => handleDownload(d)}>
                   Download
@@ -102,7 +112,7 @@ export default function MyDocuments() {
           ))}
           {documents.length === 0 && (
             <tr>
-              <td colSpan={4} className="py-6 text-center text-brand-400">
+              <td colSpan={5} className="py-6 text-center text-brand-400">
                 No documents uploaded yet
               </td>
             </tr>
