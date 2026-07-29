@@ -20,6 +20,7 @@ import MyNotifications from "./pages/notifications/MyNotifications";
 import AllNotifications from "./pages/notifications/AllNotifications";
 import AuditLog from "./pages/audit/AuditLog";
 import EmployeeList from "./pages/employee/EmployeeList";
+import Settings from "./pages/settings/Settings";
 
 function HomeRedirect() {
   const { user, loading } = useAuth();
@@ -52,6 +53,7 @@ function App() {
         <Route element={<DashboardLayout />}>
           <Route path="/audit-logs" element={<AuditLog />} />
           <Route path="/employees" element={<EmployeeList />} />
+          <Route path="/settings" element={<Settings />} />
         </Route>
       </Route>
 

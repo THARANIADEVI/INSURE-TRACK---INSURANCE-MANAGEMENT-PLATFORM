@@ -15,6 +15,7 @@ const NAV_BY_ROLE = {
     { to: "/notifications/all", label: "All Notifications" },
     { to: "/audit-logs", label: "Audit Logs" },
     { to: "/employees", label: "Employees" },
+    { to: "/settings", label: "Settings" },
   ],
   agent: [
     { to: "/dashboard", label: "Reports Dashboard" },
