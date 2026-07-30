@@ -1,5 +1,6 @@
 import os
 
+import click
 from flask import Flask, jsonify
 
 from config import Config
@@ -62,6 +63,25 @@ def create_app(config_class=Config):
     @jwt.expired_token_loader
     def expired_token_callback(jwt_header, jwt_payload):
         return jsonify({"error": "Token has expired"}), 401
+
+    @app.cli.command("promote-admin")
+    @click.argument("email")
+    @click.argument("role", default="admin")
+    def promote_admin(email, role):
+        from models.user import ROLES, User
+
+        if role not in ROLES:
+            click.echo(f"Invalid role '{role}'. Must be one of: {', '.join(ROLES)}")
+            return
+
+        user = User.query.filter_by(email=email).first()
+        if not user:
+            click.echo(f"No user found with email '{email}'. Register that account first, then run this command.")
+            return
+
+        user.role = role
+        db.session.commit()
+        click.echo(f"Promoted '{email}' to role '{role}'.")
 
     return app
 

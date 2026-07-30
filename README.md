@@ -71,6 +71,31 @@ Public self-registration (`/api/auth/register`) always creates a `customer`
 account; `admin`/`agent` accounts can only be created via the admin-only
 `/api/employees` endpoint.
 
+## Bootstrapping the first admin account
+
+Because `/api/employees` requires an existing admin, there's no way to create
+the very first admin/agent account through the API. Use the CLI command
+instead, after that user has registered normally through the frontend:
+
+```bash
+flask promote-admin someone@example.com admin   # or "agent"
+```
+
+Locally, run this in `backend/` with your venv active and `FLASK_APP=app.py`
+set. On Render, open the `insurance-backend` service's **Shell** tab and run
+the same command there (it runs against the live production database).
+
+Once you have an admin account, log in as admin and use it to:
+1. Create staff (`/api/employees` — more admins/agents) and customer profiles
+   (`/api/customers`) via the UI.
+2. Create policies, claims, premiums, and upload/verify documents for those
+   customers.
+
+Only after staff have created a customer profile and policies/claims/premiums
+for a given customer will that customer's own login show real data — this
+mirrors how an actual insurer's back office works (staff onboard customers;
+customers view their own records).
+
 ## Deployment
 
 ### Backend on Render
