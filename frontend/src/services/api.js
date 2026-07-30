@@ -1,7 +1,9 @@
 import axios from "axios";
 
+const API_BASE_URL = import.meta.env.VITE_API_URL || "/api";
+
 const api = axios.create({
-  baseURL: "/api",
+  baseURL: API_BASE_URL,
 });
 
 api.interceptors.request.use((config) => {
@@ -49,7 +51,7 @@ api.interceptors.response.use(
 
       try {
         const { data } = await axios.post(
-          "/api/auth/refresh",
+          `${API_BASE_URL}/auth/refresh`,
           {},
           { headers: { Authorization: `Bearer ${refreshToken}` } }
         );

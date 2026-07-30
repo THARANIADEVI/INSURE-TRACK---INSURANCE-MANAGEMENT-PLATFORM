@@ -1,13 +1,19 @@
-from marshmallow import Schema, fields, validate
-
-from models.user import ROLES
+from marshmallow import EXCLUDE, Schema, fields, validate
 
 
 class RegisterSchema(Schema):
+    """Public self-registration always creates a customer account.
+
+    Admin/agent accounts are provisioned only via the admin-only
+    /api/employees endpoint, never through this public route.
+    """
+
+    class Meta:
+        unknown = EXCLUDE
+
     name = fields.Str(required=True, validate=validate.Length(min=1, max=120))
     email = fields.Email(required=True)
     password = fields.Str(required=True, validate=validate.Length(min=6))
-    role = fields.Str(load_default="customer", validate=validate.OneOf(ROLES))
 
 
 class LoginSchema(Schema):

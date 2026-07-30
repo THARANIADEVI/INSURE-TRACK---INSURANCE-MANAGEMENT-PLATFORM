@@ -26,7 +26,7 @@ def register():
         return jsonify({"error": "Email already registered"}), 409
 
     password_hash = bcrypt.generate_password_hash(data["password"]).decode("utf-8")
-    user = User(name=data["name"], email=data["email"], password_hash=password_hash, role=data["role"])
+    user = User(name=data["name"], email=data["email"], password_hash=password_hash, role="customer")
     db.session.add(user)
     db.session.commit()
 

@@ -18,7 +18,10 @@ def create_app(config_class=Config):
     migrate.init_app(app, db)
     bcrypt.init_app(app)
     jwt.init_app(app)
-    cors.init_app(app, resources={r"/api/*": {"origins": "*"}})
+    cors_origins = app.config["CORS_ORIGINS"]
+    if cors_origins != "*":
+        cors_origins = [origin.strip() for origin in cors_origins.split(",")]
+    cors.init_app(app, resources={r"/api/*": {"origins": cors_origins}})
 
     from routes.auth import auth_bp
     from routes.customers import customers_bp
