@@ -20,12 +20,19 @@ export default function PolicyList() {
   });
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState("");
 
   async function load() {
     setLoading(true);
-    const { data } = await api.get("/policies", { params: { status: status || undefined, page } });
-    setData(data);
-    setLoading(false);
+    setLoadError("");
+    try {
+      const { data } = await api.get("/policies", { params: { status: status || undefined, page } });
+      setData(data);
+    } catch (err) {
+      setLoadError(err.response?.data?.error || "Failed to load policies");
+    } finally {
+      setLoading(false);
+    }
   }
 
   useEffect(() => {
@@ -138,6 +145,8 @@ export default function PolicyList() {
 
       {loading ? (
         <p className="text-brand-500">Loading...</p>
+      ) : loadError ? (
+        <p className="text-rose-600">{loadError}</p>
       ) : (
         <table className="w-full text-left text-sm">
           <thead>

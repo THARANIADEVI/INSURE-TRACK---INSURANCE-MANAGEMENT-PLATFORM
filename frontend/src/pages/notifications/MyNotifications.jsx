@@ -7,13 +7,16 @@ export default function MyNotifications() {
   const [data, setData] = useState({ items: [], page: 1, pages: 1 });
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState("");
 
   useEffect(() => {
     setLoading(true);
-    api.get("/notifications/mine", { params: { page } }).then(({ data }) => {
-      setData(data);
-      setLoading(false);
-    });
+    setLoadError("");
+    api
+      .get("/notifications/mine", { params: { page } })
+      .then(({ data }) => setData(data))
+      .catch((err) => setLoadError(err.response?.data?.error || "Failed to load notifications"))
+      .finally(() => setLoading(false));
   }, [page]);
 
   return (
@@ -24,6 +27,8 @@ export default function MyNotifications() {
       </p>
       {loading ? (
         <p className="text-brand-500">Loading...</p>
+      ) : loadError ? (
+        <p className="text-rose-600">{loadError}</p>
       ) : (
         <div className="space-y-3">
           {data.items.map((n) => (

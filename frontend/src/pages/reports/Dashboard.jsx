@@ -24,6 +24,7 @@ export default function Dashboard() {
   const [summary, setSummary] = useState(null);
   const [exporting, setExporting] = useState(false);
   const [filters, setFilters] = useState({ start_date: "", end_date: "", policy_type: "" });
+  const [loadError, setLoadError] = useState("");
 
   async function load(activeFilters = filters) {
     const params = {
@@ -31,8 +32,12 @@ export default function Dashboard() {
       end_date: activeFilters.end_date || undefined,
       policy_type: activeFilters.policy_type || undefined,
     };
-    const { data } = await api.get("/reports/summary", { params });
-    setSummary(data);
+    try {
+      const { data } = await api.get("/reports/summary", { params });
+      setSummary(data);
+    } catch (err) {
+      setLoadError(err.response?.data?.error || "Failed to load report summary");
+    }
   }
 
   useEffect(() => {
@@ -71,6 +76,7 @@ export default function Dashboard() {
     }
   }
 
+  if (loadError && !summary) return <p className="text-rose-600">{loadError}</p>;
   if (!summary) return <p className="text-brand-500">Loading...</p>;
 
   const claimData = {

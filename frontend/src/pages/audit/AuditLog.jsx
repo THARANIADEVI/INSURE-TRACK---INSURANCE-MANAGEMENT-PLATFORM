@@ -7,13 +7,16 @@ export default function AuditLog() {
   const [data, setData] = useState({ items: [], page: 1, pages: 1 });
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState("");
 
   useEffect(() => {
     setLoading(true);
-    api.get("/audit-logs", { params: { page } }).then(({ data }) => {
-      setData(data);
-      setLoading(false);
-    });
+    setLoadError("");
+    api
+      .get("/audit-logs", { params: { page } })
+      .then(({ data }) => setData(data))
+      .catch((err) => setLoadError(err.response?.data?.error || "Failed to load audit logs"))
+      .finally(() => setLoading(false));
   }, [page]);
 
   return (

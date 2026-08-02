@@ -12,12 +12,19 @@ export default function ClaimList() {
   const [page, setPage] = useState(1);
   const [notes, setNotes] = useState({});
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState("");
 
   async function load() {
     setLoading(true);
-    const { data } = await api.get("/claims", { params: { status: status || undefined, page } });
-    setData(data);
-    setLoading(false);
+    setLoadError("");
+    try {
+      const { data } = await api.get("/claims", { params: { status: status || undefined, page } });
+      setData(data);
+    } catch (err) {
+      setLoadError(err.response?.data?.error || "Failed to load claims");
+    } finally {
+      setLoading(false);
+    }
   }
 
   useEffect(() => {
@@ -51,6 +58,8 @@ export default function ClaimList() {
 
       {loading ? (
         <p className="text-brand-500">Loading...</p>
+      ) : loadError ? (
+        <p className="text-rose-600">{loadError}</p>
       ) : (
         <div className="space-y-3">
           {data.items.map((c) => (

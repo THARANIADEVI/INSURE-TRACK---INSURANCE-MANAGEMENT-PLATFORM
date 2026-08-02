@@ -9,12 +9,19 @@ export default function MyPremiums() {
   const [data, setData] = useState({ items: [], page: 1, pages: 1 });
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState("");
 
   async function load() {
     setLoading(true);
-    const { data } = await api.get("/premiums/mine", { params: { page } });
-    setData(data);
-    setLoading(false);
+    setLoadError("");
+    try {
+      const { data } = await api.get("/premiums/mine", { params: { page } });
+      setData(data);
+    } catch (err) {
+      setLoadError(err.response?.data?.error || "Failed to load premiums");
+    } finally {
+      setLoading(false);
+    }
   }
 
   useEffect(() => {
@@ -32,6 +39,8 @@ export default function MyPremiums() {
     <Card title="My Premium Payments">
       {loading ? (
         <p className="text-brand-500">Loading...</p>
+      ) : loadError ? (
+        <p className="text-rose-600">{loadError}</p>
       ) : (
         <table className="w-full text-left text-sm">
           <thead>

@@ -24,6 +24,7 @@ export default function MyProfile() {
       });
     } catch (err) {
       if (err.response?.status === 404) setNotFound(true);
+      else setError(err.response?.data?.error || "Failed to load profile");
     }
   }
 
@@ -47,6 +48,14 @@ export default function MyProfile() {
     return (
       <Card title="My Profile">
         <p className="text-brand-500">No customer profile linked to this account yet.</p>
+      </Card>
+    );
+  }
+
+  if (error && !customer) {
+    return (
+      <Card title="My Profile">
+        <p className="text-rose-600">{error}</p>
       </Card>
     );
   }

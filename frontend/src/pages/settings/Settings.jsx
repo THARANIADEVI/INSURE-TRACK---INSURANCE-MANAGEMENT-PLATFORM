@@ -22,13 +22,20 @@ export default function Settings() {
   const [savingKey, setSavingKey] = useState(null);
   const [savedKey, setSavedKey] = useState(null);
   const [errors, setErrors] = useState({});
+  const [loadError, setLoadError] = useState("");
 
   async function load() {
     setLoading(true);
-    const { data } = await api.get("/settings");
-    setSettings(data.settings);
-    setValues(Object.fromEntries(data.settings.map((s) => [s.key, s.value ?? ""])));
-    setLoading(false);
+    setLoadError("");
+    try {
+      const { data } = await api.get("/settings");
+      setSettings(data.settings);
+      setValues(Object.fromEntries(data.settings.map((s) => [s.key, s.value ?? ""])));
+    } catch (err) {
+      setLoadError(err.response?.data?.error || "Failed to load settings");
+    } finally {
+      setLoading(false);
+    }
   }
 
   useEffect(() => {
@@ -55,6 +62,8 @@ export default function Settings() {
     <Card title="System Settings">
       {loading ? (
         <p className="text-brand-500">Loading...</p>
+      ) : loadError ? (
+        <p className="text-rose-600">{loadError}</p>
       ) : (
         <div className="max-w-xl space-y-4">
           {settings.map((s) => (

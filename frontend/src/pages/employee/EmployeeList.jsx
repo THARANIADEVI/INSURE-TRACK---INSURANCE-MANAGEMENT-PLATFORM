@@ -19,6 +19,7 @@ export default function EmployeeList() {
   const [form, setForm] = useState(EMPTY_FORM);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState("");
 
   const [editingId, setEditingId] = useState(null);
   const [editForm, setEditForm] = useState(EMPTY_FORM);
@@ -26,11 +27,17 @@ export default function EmployeeList() {
 
   async function load() {
     setLoading(true);
-    const { data } = await api.get("/employees", {
-      params: { search: search || undefined, role: role || undefined, page },
-    });
-    setData(data);
-    setLoading(false);
+    setLoadError("");
+    try {
+      const { data } = await api.get("/employees", {
+        params: { search: search || undefined, role: role || undefined, page },
+      });
+      setData(data);
+    } catch (err) {
+      setLoadError(err.response?.data?.error || "Failed to load employees");
+    } finally {
+      setLoading(false);
+    }
   }
 
   useEffect(() => {
@@ -154,6 +161,8 @@ export default function EmployeeList() {
 
       {loading ? (
         <p className="text-brand-500">Loading...</p>
+      ) : loadError ? (
+        <p className="text-rose-600">{loadError}</p>
       ) : (
         <table className="w-full text-left text-sm">
           <thead>

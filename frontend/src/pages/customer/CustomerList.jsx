@@ -14,12 +14,19 @@ export default function CustomerList() {
   const [form, setForm] = useState({ name: "", email: "", phone: "", address: "", dob: "" });
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState("");
 
   async function load() {
     setLoading(true);
-    const { data } = await api.get("/customers", { params: { search: search || undefined, page } });
-    setData(data);
-    setLoading(false);
+    setLoadError("");
+    try {
+      const { data } = await api.get("/customers", { params: { search: search || undefined, page } });
+      setData(data);
+    } catch (err) {
+      setLoadError(err.response?.data?.error || "Failed to load customers");
+    } finally {
+      setLoading(false);
+    }
   }
 
   useEffect(() => {
@@ -98,6 +105,8 @@ export default function CustomerList() {
 
         {loading ? (
           <p className="text-brand-500">Loading...</p>
+        ) : loadError ? (
+          <p className="text-rose-600">{loadError}</p>
         ) : (
           <table className="w-full text-left text-sm">
             <thead>

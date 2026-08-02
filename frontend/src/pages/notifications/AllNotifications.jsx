@@ -10,12 +10,19 @@ export default function AllNotifications() {
   const [userId, setUserId] = useState("");
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState("");
 
   async function load() {
     setLoading(true);
-    const { data } = await api.get("/notifications", { params: { user_id: userId || undefined, page } });
-    setData(data);
-    setLoading(false);
+    setLoadError("");
+    try {
+      const { data } = await api.get("/notifications", { params: { user_id: userId || undefined, page } });
+      setData(data);
+    } catch (err) {
+      setLoadError(err.response?.data?.error || "Failed to load notifications");
+    } finally {
+      setLoading(false);
+    }
   }
 
   useEffect(() => {
@@ -45,6 +52,8 @@ export default function AllNotifications() {
 
       {loading ? (
         <p className="text-brand-500">Loading...</p>
+      ) : loadError ? (
+        <p className="text-rose-600">{loadError}</p>
       ) : (
         <table className="w-full text-left text-sm">
           <thead>

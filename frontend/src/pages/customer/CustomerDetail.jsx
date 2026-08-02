@@ -15,19 +15,24 @@ export default function CustomerDetail() {
   const [error, setError] = useState("");
   const [reviewNotes, setReviewNotes] = useState({});
   const [reviewError, setReviewError] = useState({});
+  const [loadError, setLoadError] = useState("");
 
   async function load() {
-    const { data } = await api.get(`/customers/${id}/history`);
-    setHistory(data);
-    setForm({
-      name: data.customer.name,
-      email: data.customer.email,
-      phone: data.customer.phone || "",
-      address: data.customer.address || "",
-      dob: data.customer.dob || "",
-    });
-    const docsRes = await api.get("/documents", { params: { customer_id: id } });
-    setDocuments(docsRes.data.documents);
+    try {
+      const { data } = await api.get(`/customers/${id}/history`);
+      setHistory(data);
+      setForm({
+        name: data.customer.name,
+        email: data.customer.email,
+        phone: data.customer.phone || "",
+        address: data.customer.address || "",
+        dob: data.customer.dob || "",
+      });
+      const docsRes = await api.get("/documents", { params: { customer_id: id } });
+      setDocuments(docsRes.data.documents);
+    } catch (err) {
+      setLoadError(err.response?.data?.error || "Failed to load customer");
+    }
   }
 
   async function handleDownload(doc) {
@@ -67,6 +72,7 @@ export default function CustomerDetail() {
     }
   }
 
+  if (loadError && !history) return <p className="text-rose-600">{loadError}</p>;
   if (!history) return <p className="text-brand-500">Loading...</p>;
 
   const { customer, policies, claims, payments } = history;

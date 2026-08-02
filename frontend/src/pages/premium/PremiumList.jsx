@@ -14,12 +14,19 @@ export default function PremiumList() {
   const [form, setForm] = useState({ policy_id: "", due_date: "", amount: "" });
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState("");
 
   async function load() {
     setLoading(true);
-    const { data } = await api.get("/premiums", { params: { status: status || undefined, page } });
-    setData(data);
-    setLoading(false);
+    setLoadError("");
+    try {
+      const { data } = await api.get("/premiums", { params: { status: status || undefined, page } });
+      setData(data);
+    } catch (err) {
+      setLoadError(err.response?.data?.error || "Failed to load premiums");
+    } finally {
+      setLoading(false);
+    }
   }
 
   useEffect(() => {
@@ -98,6 +105,8 @@ export default function PremiumList() {
 
       {loading ? (
         <p className="text-brand-500">Loading...</p>
+      ) : loadError ? (
+        <p className="text-rose-600">{loadError}</p>
       ) : (
         <table className="w-full text-left text-sm">
           <thead>

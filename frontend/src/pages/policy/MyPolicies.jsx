@@ -8,13 +8,16 @@ export default function MyPolicies() {
   const [data, setData] = useState({ items: [], page: 1, pages: 1 });
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState("");
 
   useEffect(() => {
     setLoading(true);
-    api.get("/policies/mine", { params: { page } }).then(({ data }) => {
-      setData(data);
-      setLoading(false);
-    });
+    setLoadError("");
+    api
+      .get("/policies/mine", { params: { page } })
+      .then(({ data }) => setData(data))
+      .catch((err) => setLoadError(err.response?.data?.error || "Failed to load policies"))
+      .finally(() => setLoading(false));
   }, [page]);
 
   async function handleViewQr(id) {
@@ -27,6 +30,8 @@ export default function MyPolicies() {
     <Card title="My Policies">
       {loading ? (
         <p className="text-brand-500">Loading...</p>
+      ) : loadError ? (
+        <p className="text-rose-600">{loadError}</p>
       ) : (
         <table className="w-full text-left text-sm">
           <thead>
