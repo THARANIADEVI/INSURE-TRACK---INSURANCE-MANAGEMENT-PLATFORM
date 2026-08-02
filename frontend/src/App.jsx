@@ -16,6 +16,7 @@ import ClaimList from "./pages/claim/ClaimList";
 import MyClaims from "./pages/claim/MyClaims";
 import MyDocuments from "./pages/document/MyDocuments";
 import Dashboard from "./pages/reports/Dashboard";
+import Overview from "./pages/dashboard/Overview";
 import MyNotifications from "./pages/notifications/MyNotifications";
 import AllNotifications from "./pages/notifications/AllNotifications";
 import AuditLog from "./pages/audit/AuditLog";
@@ -38,7 +39,8 @@ function App() {
 
       <Route element={<ProtectedRoute roles={["admin", "agent"]} />}>
         <Route element={<DashboardLayout />}>
-          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/dashboard" element={<Overview />} />
+          <Route path="/reports" element={<Dashboard />} />
           <Route path="/customers" element={<CustomerList />} />
           <Route path="/customers/:id" element={<CustomerDetail />} />
           <Route path="/policies" element={<PolicyList />} />

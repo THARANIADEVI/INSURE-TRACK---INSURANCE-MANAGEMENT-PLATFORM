@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useLocation } from "react-router-dom";
 import api from "../../services/api";
 import Card from "../../components/Card";
 import Button from "../../components/Button";
@@ -7,10 +8,11 @@ import Pagination from "../../components/Pagination";
 import FormField, { Input } from "../../components/FormField";
 
 export default function PremiumList() {
+  const location = useLocation();
   const [data, setData] = useState({ items: [], page: 1, pages: 1 });
   const [status, setStatus] = useState("");
   const [page, setPage] = useState(1);
-  const [showForm, setShowForm] = useState(false);
+  const [showForm, setShowForm] = useState(Boolean(location.state?.openForm));
   const [form, setForm] = useState({ policy_id: "", due_date: "", amount: "" });
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);

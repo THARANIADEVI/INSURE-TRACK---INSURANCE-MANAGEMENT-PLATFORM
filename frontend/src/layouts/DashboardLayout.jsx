@@ -5,7 +5,7 @@ import ThemeToggle from "../components/ThemeToggle";
 
 const NAV_BY_ROLE = {
   admin: [
-    { to: "/dashboard", label: "Reports Dashboard" },
+    { to: "/dashboard", label: "Dashboard" },
     { to: "/customers", label: "Customers" },
     { to: "/policies", label: "Policies" },
     { to: "/policies/expiring", label: "Expiring Policies" },
@@ -13,12 +13,13 @@ const NAV_BY_ROLE = {
     { to: "/claims", label: "Claims" },
     { to: "/notifications", label: "Notifications" },
     { to: "/notifications/all", label: "All Notifications" },
+    { to: "/reports", label: "Reports" },
     { to: "/audit-logs", label: "Audit Logs" },
     { to: "/employees", label: "Employees" },
     { to: "/settings", label: "Settings" },
   ],
   agent: [
-    { to: "/dashboard", label: "Reports Dashboard" },
+    { to: "/dashboard", label: "Dashboard" },
     { to: "/customers", label: "Customers" },
     { to: "/policies", label: "Policies" },
     { to: "/policies/expiring", label: "Expiring Policies" },
@@ -26,6 +27,7 @@ const NAV_BY_ROLE = {
     { to: "/claims", label: "Claims" },
     { to: "/notifications", label: "Notifications" },
     { to: "/notifications/all", label: "All Notifications" },
+    { to: "/reports", label: "Reports" },
   ],
   customer: [
     { to: "/my-profile", label: "My Profile" },
