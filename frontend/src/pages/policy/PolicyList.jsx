@@ -68,7 +68,7 @@ export default function PolicyList() {
 
   async function handleViewQr(id) {
     const response = await api.get(`/policies/${id}/qr`, { responseType: "blob" });
-    const url = window.URL.createObjectURL(new Blob([response.data]));
+    const url = window.URL.createObjectURL(new Blob([response.data], { type: "image/png" }));
     window.open(url, "_blank");
   }
 
