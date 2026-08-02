@@ -17,6 +17,7 @@ import MyClaims from "./pages/claim/MyClaims";
 import MyDocuments from "./pages/document/MyDocuments";
 import Dashboard from "./pages/reports/Dashboard";
 import Overview from "./pages/dashboard/Overview";
+import CustomerOverview from "./pages/dashboard/CustomerOverview";
 import MyNotifications from "./pages/notifications/MyNotifications";
 import AllNotifications from "./pages/notifications/AllNotifications";
 import AuditLog from "./pages/audit/AuditLog";
@@ -27,7 +28,7 @@ function HomeRedirect() {
   const { user, loading } = useAuth();
   if (loading) return null;
   if (!user) return <Navigate to="/login" replace />;
-  return <Navigate to={user.role === "customer" ? "/my-policies" : "/dashboard"} replace />;
+  return <Navigate to={user.role === "customer" ? "/my-dashboard" : "/dashboard"} replace />;
 }
 
 function App() {
@@ -61,6 +62,7 @@ function App() {
 
       <Route element={<ProtectedRoute roles={["customer"]} />}>
         <Route element={<DashboardLayout />}>
+          <Route path="/my-dashboard" element={<CustomerOverview />} />
           <Route path="/my-policies" element={<MyPolicies />} />
           <Route path="/my-premiums" element={<MyPremiums />} />
           <Route path="/my-claims" element={<MyClaims />} />

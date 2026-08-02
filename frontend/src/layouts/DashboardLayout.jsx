@@ -30,6 +30,7 @@ const NAV_BY_ROLE = {
     { to: "/reports", label: "Reports" },
   ],
   customer: [
+    { to: "/my-dashboard", label: "Dashboard" },
     { to: "/my-profile", label: "My Profile" },
     { to: "/my-policies", label: "My Policies" },
     { to: "/my-premiums", label: "My Premiums" },

@@ -60,6 +60,16 @@ export default function CustomerDetail() {
     }
   }
 
+  async function handleDeleteDocument(doc) {
+    if (!confirm(`Delete "${doc.file_name}"?`)) return;
+    try {
+      await api.delete(`/documents/${doc.id}`);
+      load();
+    } catch (err) {
+      alert(err.response?.data?.error || "Failed to delete document");
+    }
+  }
+
   async function handleSave(e) {
     e.preventDefault();
     setError("");
@@ -202,6 +212,9 @@ export default function CustomerDetail() {
                     <div className="flex flex-col items-end gap-1">
                       <button className="text-brand-600 underline" onClick={() => handleDownload(d)}>
                         Download
+                      </button>
+                      <button className="text-rose-600 underline" onClick={() => handleDeleteDocument(d)}>
+                        Delete
                       </button>
                       {d.verification_status === "pending" && (
                         <div className="flex items-center gap-2">

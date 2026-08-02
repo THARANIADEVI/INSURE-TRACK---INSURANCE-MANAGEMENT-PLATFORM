@@ -111,6 +111,29 @@ def download_document(document_id):
     return send_file(document.file_path, as_attachment=True, download_name=document.file_name)
 
 
+@documents_bp.route("/<int:document_id>", methods=["DELETE"])
+@jwt_required()
+def delete_document(document_id):
+    claims = get_jwt()
+    document = Document.query.get_or_404(document_id)
+
+    if claims.get("role") == "customer":
+        identity = int(get_jwt_identity())
+        customer = Customer.query.filter_by(user_id=identity).first()
+        if not customer or document.customer_id != customer.id:
+            return jsonify({"error": "Forbidden"}), 403
+        if document.verification_status != "pending":
+            return jsonify({"error": "Cannot delete a document that has already been reviewed"}), 400
+
+    if os.path.exists(document.file_path):
+        os.remove(document.file_path)
+
+    log_action("document", document.id, "delete", int(get_jwt_identity()), document.file_name)
+    db.session.delete(document)
+    db.session.commit()
+    return jsonify({"message": "Document deleted"})
+
+
 @documents_bp.route("/<int:document_id>/verify", methods=["PUT"])
 @role_required("admin", "agent")
 def verify_document(document_id):

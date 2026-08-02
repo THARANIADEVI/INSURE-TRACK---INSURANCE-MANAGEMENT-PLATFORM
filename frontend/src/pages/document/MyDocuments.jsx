@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import api from "../../services/api";
 import Card from "../../components/Card";
 import Button from "../../components/Button";
@@ -11,10 +11,17 @@ export default function MyDocuments() {
   const [docType, setDocType] = useState("identity");
   const [error, setError] = useState("");
   const [uploading, setUploading] = useState(false);
+  const [loadError, setLoadError] = useState("");
+  const fileInputRef = useRef(null);
 
   async function load() {
-    const { data } = await api.get("/documents/mine");
-    setDocuments(data.documents);
+    setLoadError("");
+    try {
+      const { data } = await api.get("/documents/mine");
+      setDocuments(data.documents);
+    } catch (err) {
+      setLoadError(err.response?.data?.error || "Failed to load documents");
+    }
   }
 
   useEffect(() => {
@@ -35,6 +42,7 @@ export default function MyDocuments() {
     try {
       await api.post("/documents", formData, { headers: { "Content-Type": "multipart/form-data" } });
       setFile(null);
+      if (fileInputRef.current) fileInputRef.current.value = "";
       load();
     } catch (err) {
       setError(err.response?.data?.error || "Upload failed");
@@ -53,9 +61,19 @@ export default function MyDocuments() {
     window.URL.revokeObjectURL(url);
   }
 
+  async function handleDelete(doc) {
+    if (!confirm(`Delete "${doc.file_name}"?`)) return;
+    try {
+      await api.delete(`/documents/${doc.id}`);
+      load();
+    } catch (err) {
+      alert(err.response?.data?.error || "Failed to delete document");
+    }
+  }
+
   return (
     <Card title="My Documents">
-      <form onSubmit={handleUpload} className="mb-6 flex items-end gap-3 rounded-lg bg-brand-50 p-4">
+      <form onSubmit={handleUpload} className="mb-6 space-y-3 rounded-lg bg-brand-50 p-4">
         <FormField label="Document type">
           <Select value={docType} onChange={(e) => setDocType(e.target.value)}>
             <option value="identity">Identity</option>
@@ -64,13 +82,21 @@ export default function MyDocuments() {
           </Select>
         </FormField>
         <FormField label="File (pdf, png, jpg, doc)">
-          <input type="file" onChange={(e) => setFile(e.target.files[0])} className="text-sm" />
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept=".pdf,.png,.jpg,.jpeg,.doc,.docx"
+            onChange={(e) => setFile(e.target.files[0] || null)}
+            className="block w-full text-sm"
+          />
         </FormField>
+        {file && <p className="text-xs text-brand-600">Selected: {file.name}</p>}
+        {error && <p className="text-sm text-rose-600">{error}</p>}
         <Button type="submit" disabled={uploading}>
           {uploading ? "Uploading..." : "Upload"}
         </Button>
       </form>
-      {error && <p className="mb-3 text-sm text-rose-600">{error}</p>}
+      {loadError && <p className="mb-3 text-sm text-rose-600">{loadError}</p>}
 
       <table className="w-full text-left text-sm">
         <thead>
@@ -103,10 +129,15 @@ export default function MyDocuments() {
                   </p>
                 )}
               </td>
-              <td className="text-right">
+              <td className="space-x-2 text-right">
                 <button className="text-brand-600 underline" onClick={() => handleDownload(d)}>
                   Download
                 </button>
+                {d.verification_status === "pending" && (
+                  <button className="text-rose-600 underline" onClick={() => handleDelete(d)}>
+                    Delete
+                  </button>
+                )}
               </td>
             </tr>
           ))}
