@@ -4,11 +4,12 @@ import Card from "../../components/Card";
 import Button from "../../components/Button";
 import Badge from "../../components/Badge";
 import Pagination from "../../components/Pagination";
-import FormField, { Input, TextArea } from "../../components/FormField";
+import FormField, { Input, Select, TextArea } from "../../components/FormField";
 
 export default function MyClaims() {
   const [data, setData] = useState({ items: [], page: 1, pages: 1 });
   const [page, setPage] = useState(1);
+  const [policies, setPolicies] = useState([]);
   const [showForm, setShowForm] = useState(false);
   const [form, setForm] = useState({ policy_id: "", claim_amount: "", reason: "" });
   const [error, setError] = useState("");
@@ -28,10 +29,22 @@ export default function MyClaims() {
     }
   }
 
+  async function loadPolicies() {
+    try {
+      const { data } = await api.get("/policies/mine", { params: { page: 1 } });
+      setPolicies(data.items.filter((p) => p.status === "active"));
+    } catch {
+      setPolicies([]);
+    }
+  }
+
   useEffect(() => {
     load();
+    loadPolicies();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [page]);
+
+  const policyNumberById = Object.fromEntries(policies.map((p) => [p.id, p.policy_number]));
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -53,13 +66,21 @@ export default function MyClaims() {
     >
       {showForm && (
         <form onSubmit={handleSubmit} className="mb-6 space-y-3 rounded-lg bg-brand-50 p-4">
-          <FormField label="Policy ID">
-            <Input
-              type="number"
+          <FormField label="Policy">
+            <Select
               required
               value={form.policy_id}
               onChange={(e) => setForm({ ...form, policy_id: e.target.value })}
-            />
+            >
+              <option value="" disabled>
+                {policies.length === 0 ? "No active policies" : "Select a policy"}
+              </option>
+              {policies.map((p) => (
+                <option key={p.id} value={p.id}>
+                  {p.policy_number} · {p.policy_type}
+                </option>
+              ))}
+            </Select>
           </FormField>
           <FormField label="Claim amount">
             <Input
@@ -88,7 +109,7 @@ export default function MyClaims() {
             <div key={c.id} className="rounded-lg border border-brand-100 p-4">
               <div className="mb-1 flex items-center justify-between">
                 <p className="font-semibold text-brand-900">
-                  Policy #{c.policy_id} · {c.claim_amount}
+                  {policyNumberById[c.policy_id] || `Policy #${c.policy_id}`} · {c.claim_amount}
                 </p>
                 <Badge status={c.status} />
               </div>
