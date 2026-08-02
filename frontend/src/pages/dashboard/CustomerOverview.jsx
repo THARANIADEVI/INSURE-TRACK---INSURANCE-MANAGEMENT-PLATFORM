@@ -80,7 +80,11 @@ export default function CustomerOverview() {
       {overduePremiums > 0 && (
         <div className="rounded-lg border border-rose-300 bg-rose-50 px-4 py-3 text-sm text-rose-700">
           You have {overduePremiums} overdue premium payment(s).{" "}
-          <button className="font-semibold underline" onClick={() => navigate("/my-premiums")}>
+          <button
+            type="button"
+            className="cursor-pointer font-semibold underline hover:text-rose-900"
+            onClick={() => navigate("/my-premiums")}
+          >
             Pay now
           </button>
         </div>
@@ -90,7 +94,11 @@ export default function CustomerOverview() {
         <Card
           title="Recent Claims"
           action={
-            <button className="text-sm font-semibold text-brand-600" onClick={() => navigate("/my-claims")}>
+            <button
+              type="button"
+              className="cursor-pointer text-sm font-semibold text-brand-600 hover:text-brand-800 hover:underline"
+              onClick={() => navigate("/my-claims")}
+            >
               View all →
             </button>
           }
