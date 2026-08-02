@@ -1,4 +1,6 @@
-from flask import Blueprint, jsonify, request
+import hmac
+
+from flask import Blueprint, current_app, jsonify, request
 from flask_jwt_extended import (
     create_access_token,
     create_refresh_token,
@@ -9,7 +11,7 @@ from marshmallow import ValidationError
 
 from extensions import bcrypt
 from models import db
-from models.user import User
+from models.user import ROLES, User
 from schemas.auth import login_schema, register_schema
 
 auth_bp = Blueprint("auth", __name__, url_prefix="/api/auth")
@@ -76,4 +78,32 @@ def me():
     user = User.query.get(int(identity))
     if not user:
         return jsonify({"error": "User not found"}), 404
+    return jsonify({"user": user.to_dict()})
+
+
+@auth_bp.route("/bootstrap-admin", methods=["POST"])
+def bootstrap_admin():
+    secret = current_app.config.get("ADMIN_BOOTSTRAP_SECRET", "")
+    if not secret:
+        return jsonify({"error": "Not found"}), 404
+
+    data = request.get_json() or {}
+    provided_secret = data.get("secret", "")
+    if not hmac.compare_digest(secret, provided_secret):
+        return jsonify({"error": "Invalid secret"}), 401
+
+    if User.query.filter_by(role="admin").first():
+        return jsonify({"error": "An admin account already exists; use /api/employees instead"}), 403
+
+    role = data.get("role", "admin")
+    if role not in ROLES:
+        return jsonify({"error": f"Invalid role '{role}'. Must be one of: {', '.join(ROLES)}"}), 400
+
+    email = data.get("email", "")
+    user = User.query.filter_by(email=email).first()
+    if not user:
+        return jsonify({"error": f"No user found with email '{email}'. Register that account first."}), 404
+
+    user.role = role
+    db.session.commit()
     return jsonify({"user": user.to_dict()})

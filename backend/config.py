@@ -13,6 +13,14 @@ def _normalized_database_uri():
     # SQLAlchemy 1.4+ no longer recognizes; it requires "postgresql://".
     if uri.startswith("postgres://"):
         uri = uri.replace("postgres://", "postgresql://", 1)
+    # Flask-SQLAlchemy resolves a relative "sqlite:///name.db" path against
+    # app.instance_path (backend/instance/), not this directory. Force it to
+    # an absolute path here so a relative DATABASE_URL (e.g. from .env) can't
+    # silently point at a different, un-migrated database file.
+    if uri.startswith("sqlite:///"):
+        db_path = uri[len("sqlite:///"):]
+        if not os.path.isabs(db_path):
+            uri = f"sqlite:///{os.path.join(BASE_DIR, db_path)}"
     return uri
 
 
@@ -34,3 +42,8 @@ class Config:
     # Comma-separated list of allowed frontend origins for CORS in production,
     # e.g. "https://my-app.vercel.app". Defaults to "*" for local development.
     CORS_ORIGINS = os.environ.get("CORS_ORIGINS", "*")
+
+    # One-time shared secret for POST /api/auth/bootstrap-admin, used to promote
+    # the first admin account on hosts (e.g. Render free tier) with no shell
+    # access. Unset/empty disables the endpoint entirely.
+    ADMIN_BOOTSTRAP_SECRET = os.environ.get("ADMIN_BOOTSTRAP_SECRET", "")
