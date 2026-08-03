@@ -1,38 +1,44 @@
-@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Sora:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap");
 @import "tailwindcss";
 
 @theme {
-  --font-heading: "Poppins", system-ui, sans-serif;
+  --font-heading: "Sora", system-ui, sans-serif;
+  --font-sans: "Inter", system-ui, sans-serif;
 
-  --color-brand-50: #f5eefc;
-  --color-brand-100: #e6d3f7;
-  --color-brand-200: #cba7ef;
-  --color-brand-300: #ac78e3;
-  --color-brand-400: #8c4ed2;
-  --color-brand-500: #6c2bb8;
-  --color-brand-600: #4b0082;
-  --color-brand-700: #3a0066;
-  --color-brand-800: #2a004a;
-  --color-brand-900: #1a002e;
+  --color-brand-50: #f0fdfa;
+  --color-brand-100: #ccfbf1;
+  --color-brand-200: #99f6e4;
+  --color-brand-300: #5eead4;
+  --color-brand-400: #2dd4bf;
+  --color-brand-500: #14b8a6;
+  --color-brand-600: #0d9488;
+  --color-brand-700: #0f766e;
+  --color-brand-800: #115e59;
+  --color-brand-900: #134e4a;
 
-  --color-offwhite: #faf8fc;
-  --color-ink: #2a1a35;
+  --color-offwhite: #f4faf9;
+  --color-ink: #0f2a27;
   --color-surface: #ffffff;
-  --color-surface-border: #e6d3f7;
+  --color-surface-border: #d7f0ec;
+
+  --color-sidebar: #0b1f2a;
+  --color-sidebar-border: #16323f;
+  --color-sidebar-text: #9fb8c2;
+  --color-sidebar-active: #134e4a;
 }
 
 .dark {
-  --color-offwhite: #180f1f;
-  --color-ink: #f3e8fb;
-  --color-surface: #241730;
-  --color-surface-border: #3d2850;
+  --color-offwhite: #081613;
+  --color-ink: #e6faf6;
+  --color-surface: #0f2723;
+  --color-surface-border: #1d3d37;
 }
 
 body {
   margin: 0;
   background-color: var(--color-offwhite);
   color: var(--color-ink);
-  font-family: system-ui, "Segoe UI", Roboto, sans-serif;
+  font-family: "Inter", system-ui, "Segoe UI", Roboto, sans-serif;
   transition: background-color 0.2s ease, color 0.2s ease;
 }
 

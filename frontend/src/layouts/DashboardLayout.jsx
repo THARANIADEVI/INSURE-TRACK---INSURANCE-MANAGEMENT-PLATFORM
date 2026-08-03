@@ -46,14 +46,14 @@ export default function DashboardLayout() {
 
   return (
     <div className="flex min-h-screen bg-offwhite">
-      <aside className="w-64 shrink-0 border-r border-surface-border bg-surface">
-        <div className="flex items-center gap-3 border-b border-surface-border px-6 py-5">
-          <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-brand-500 to-brand-700 font-heading text-sm font-bold text-white">
+      <aside className="w-64 shrink-0 bg-[color:var(--color-sidebar)]">
+        <div className="flex items-center gap-3 border-b border-[color:var(--color-sidebar-border)] px-6 py-5">
+          <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-brand-400 to-brand-600 font-heading text-sm font-bold text-white">
             IT
           </span>
           <div>
-            <h1 className="font-heading text-lg font-bold leading-tight text-brand-700">InsureTrack</h1>
-            <p className="text-xs text-brand-500">Management Platform</p>
+            <h1 className="font-heading text-lg font-bold leading-tight text-white">InsureTrack</h1>
+            <p className="text-xs text-[color:var(--color-sidebar-text)]">Management Platform</p>
           </div>
         </div>
         <nav className="flex flex-col gap-1 p-3">
@@ -62,10 +62,10 @@ export default function DashboardLayout() {
               key={link.to}
               to={link.to}
               className={({ isActive }) =>
-                `flex items-center gap-2 rounded-lg border-l-4 px-4 py-2 text-sm font-medium transition ${
+                `flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition ${
                   isActive
-                    ? "border-brand-600 bg-brand-50 text-brand-700"
-                    : "border-transparent text-brand-800 hover:bg-brand-50"
+                    ? "bg-[color:var(--color-sidebar-active)] text-white"
+                    : "text-[color:var(--color-sidebar-text)] hover:bg-white/5 hover:text-white"
                 }`
               }
             >

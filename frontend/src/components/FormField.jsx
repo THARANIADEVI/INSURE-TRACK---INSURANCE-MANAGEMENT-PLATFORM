@@ -11,7 +11,7 @@ export default function FormField({ label, error, children }) {
 export function Input(props) {
   return (
     <input
-      className="w-full rounded-lg border border-brand-200 bg-offwhite px-3 py-2 text-sm text-ink outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-200"
+      className="w-full rounded-xl border-2 border-brand-200 bg-surface px-3 py-2 text-sm text-ink outline-none transition focus:border-brand-500 focus:ring-4 focus:ring-brand-100"
       {...props}
     />
   );
@@ -20,7 +20,7 @@ export function Input(props) {
 export function Select({ children, ...props }) {
   return (
     <select
-      className="w-full rounded-lg border border-brand-200 bg-offwhite px-3 py-2 text-sm text-ink outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-200"
+      className="w-full rounded-xl border-2 border-brand-200 bg-surface px-3 py-2 text-sm text-ink outline-none transition focus:border-brand-500 focus:ring-4 focus:ring-brand-100"
       {...props}
     >
       {children}
@@ -31,7 +31,7 @@ export function Select({ children, ...props }) {
 export function TextArea(props) {
   return (
     <textarea
-      className="w-full rounded-lg border border-brand-200 bg-offwhite px-3 py-2 text-sm text-ink outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-200"
+      className="w-full rounded-xl border-2 border-brand-200 bg-surface px-3 py-2 text-sm text-ink outline-none transition focus:border-brand-500 focus:ring-4 focus:ring-brand-100"
       rows={3}
       {...props}
     />

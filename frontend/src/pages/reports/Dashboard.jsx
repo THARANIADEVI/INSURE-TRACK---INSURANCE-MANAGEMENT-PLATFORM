@@ -95,7 +95,7 @@ export default function Dashboard() {
       {
         label: "Premium Collected",
         data: summary.monthly_premium_collection.map((r) => r.total),
-        backgroundColor: "#6c2bb8",
+        backgroundColor: "#14b8a6",
       },
     ],
   };
@@ -106,8 +106,8 @@ export default function Dashboard() {
       {
         label: "New Customers",
         data: summary.customer_growth.map((r) => r.count),
-        borderColor: "#4b0082",
-        backgroundColor: "#cba7ef",
+        borderColor: "#0f766e",
+        backgroundColor: "#99f6e4",
         tension: 0.3,
       },
     ],
@@ -119,7 +119,7 @@ export default function Dashboard() {
       {
         label: "Policies by Type",
         data: summary.policy_type_breakdown.map((r) => r.count),
-        backgroundColor: ["#6c2bb8", "#8c4ed2", "#ac78e3", "#4b0082", "#3a0066"],
+        backgroundColor: ["#14b8a6", "#2dd4bf", "#5eead4", "#0d9488", "#0f766e"],
       },
     ],
   };
