@@ -47,3 +47,8 @@ class Config:
     # the first admin account on hosts (e.g. Render free tier) with no shell
     # access. Unset/empty disables the endpoint entirely.
     ADMIN_BOOTSTRAP_SECRET = os.environ.get("ADMIN_BOOTSTRAP_SECRET", "")
+
+    # Shared secret for POST /api/auth/reset-password, used to reset a user's
+    # password on hosts with no shell access. Unset/empty disables the
+    # endpoint entirely.
+    PASSWORD_RESET_SECRET = os.environ.get("PASSWORD_RESET_SECRET", "")

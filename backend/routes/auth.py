@@ -17,6 +17,10 @@ from schemas.auth import login_schema, register_schema
 auth_bp = Blueprint("auth", __name__, url_prefix="/api/auth")
 
 
+def _find_user_by_email(email):
+    return User.query.filter(db.func.lower(User.email) == email.lower()).first()
+
+
 @auth_bp.route("/register", methods=["POST"])
 def register():
     try:
@@ -24,7 +28,7 @@ def register():
     except ValidationError as err:
         return jsonify({"errors": err.messages}), 400
 
-    if User.query.filter_by(email=data["email"]).first():
+    if _find_user_by_email(data["email"]):
         return jsonify({"error": "Email already registered"}), 409
 
     password_hash = bcrypt.generate_password_hash(data["password"]).decode("utf-8")
@@ -42,7 +46,7 @@ def login():
     except ValidationError as err:
         return jsonify({"errors": err.messages}), 400
 
-    user = User.query.filter_by(email=data["email"]).first()
+    user = _find_user_by_email(data["email"])
     if not user or not bcrypt.check_password_hash(user.password_hash, data["password"]):
         return jsonify({"error": "Invalid email or password"}), 401
 
@@ -105,5 +109,30 @@ def bootstrap_admin():
         return jsonify({"error": f"No user found with email '{email}'. Register that account first."}), 404
 
     user.role = role
+    db.session.commit()
+    return jsonify({"user": user.to_dict()})
+
+
+@auth_bp.route("/reset-password", methods=["POST"])
+def reset_password():
+    secret = current_app.config.get("PASSWORD_RESET_SECRET", "")
+    if not secret:
+        return jsonify({"error": "Not found"}), 404
+
+    data = request.get_json() or {}
+    provided_secret = data.get("secret", "")
+    if not hmac.compare_digest(secret, provided_secret):
+        return jsonify({"error": "Invalid secret"}), 401
+
+    email = data.get("email", "")
+    new_password = data.get("new_password", "")
+    if not email or len(new_password) < 6:
+        return jsonify({"error": "email and new_password (min 6 chars) are required"}), 400
+
+    user = _find_user_by_email(email)
+    if not user:
+        return jsonify({"error": f"No user found with email '{email}'."}), 404
+
+    user.password_hash = bcrypt.generate_password_hash(new_password).decode("utf-8")
     db.session.commit()
     return jsonify({"user": user.to_dict()})

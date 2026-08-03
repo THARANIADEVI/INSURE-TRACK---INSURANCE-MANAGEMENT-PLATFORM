@@ -1,4 +1,4 @@
-from marshmallow import EXCLUDE, Schema, fields, validate
+from marshmallow import EXCLUDE, Schema, fields, pre_load, validate
 
 
 class RegisterSchema(Schema):
@@ -15,10 +15,22 @@ class RegisterSchema(Schema):
     email = fields.Email(required=True)
     password = fields.Str(required=True, validate=validate.Length(min=6))
 
+    @pre_load
+    def normalize_email(self, data, **kwargs):
+        if isinstance(data, dict) and isinstance(data.get("email"), str):
+            data = {**data, "email": data["email"].strip().lower()}
+        return data
+
 
 class LoginSchema(Schema):
     email = fields.Email(required=True)
     password = fields.Str(required=True)
+
+    @pre_load
+    def normalize_email(self, data, **kwargs):
+        if isinstance(data, dict) and isinstance(data.get("email"), str):
+            data = {**data, "email": data["email"].strip().lower()}
+        return data
 
 
 register_schema = RegisterSchema()

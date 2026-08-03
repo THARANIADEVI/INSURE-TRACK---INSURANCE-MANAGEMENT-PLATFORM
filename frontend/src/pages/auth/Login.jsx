@@ -18,7 +18,7 @@ export default function Login() {
     setSubmitting(true);
     try {
       const user = await login(form.email, form.password);
-      const dest = location.state?.from || (user.role === "customer" ? "/my-policies" : "/dashboard");
+      const dest = location.state?.from || (user.role === "customer" ? "/my-dashboard" : "/dashboard");
       navigate(dest, { replace: true });
     } catch (err) {
       setError(err.response?.data?.error || "Login failed");
