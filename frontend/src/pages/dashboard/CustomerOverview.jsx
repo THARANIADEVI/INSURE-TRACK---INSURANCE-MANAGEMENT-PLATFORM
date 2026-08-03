@@ -1,10 +1,20 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { ArcElement, Chart as ChartJS, Legend, Tooltip } from "chart.js";
+import { Doughnut } from "react-chartjs-2";
 import api from "../../services/api";
 import { useAuth } from "../../hooks/useAuth";
 import Card from "../../components/Card";
 import Badge from "../../components/Badge";
-import Button from "../../components/Button";
+
+ChartJS.register(ArcElement, Tooltip, Legend);
+
+const QUICK_ACTIONS = [
+  { label: "View Policies", icon: "📄", to: "/my-policies" },
+  { label: "Submit Claim", icon: "📝", to: "/my-claims", state: { openForm: true } },
+  { label: "Pay Premium", icon: "💳", to: "/my-premiums" },
+  { label: "Upload Document", icon: "📁", to: "/my-documents" },
+];
 
 export default function CustomerOverview() {
   const { user } = useAuth();
@@ -55,15 +65,46 @@ export default function CustomerOverview() {
 
   const activePolicies = policies.filter((p) => p.status === "active").length;
   const pendingClaims = claims.filter((c) => c.status === "pending").length;
+  const approvedClaims = claims.filter((c) => c.status === "approved").length;
+  const rejectedClaims = claims.filter((c) => c.status === "rejected").length;
   const overduePremiums = premiums.filter((p) => p.payment_status === "overdue").length;
   const pendingDocuments = documents.filter((d) => d.verification_status === "pending").length;
-  const recentClaims = claims.slice(0, 5);
+
+  const upcomingPremiums = premiums
+    .filter((p) => p.payment_status !== "paid")
+    .sort((a, b) => new Date(a.due_date) - new Date(b.due_date))
+    .slice(0, 4);
+
+  const claimsChartData = {
+    labels: ["Pending", "Approved", "Rejected"],
+    datasets: [
+      {
+        data: [pendingClaims, approvedClaims, rejectedClaims],
+        backgroundColor: ["#f59e0b", "#10b981", "#f43f5e"],
+        borderWidth: 0,
+      },
+    ],
+  };
 
   return (
     <div className="space-y-6">
       <div>
         <h1 className="font-heading text-2xl font-bold text-brand-900">Welcome, {user?.name}</h1>
         <p className="text-brand-500">Here's a quick look at your policies, premiums, and claims.</p>
+      </div>
+
+      <div className="flex flex-wrap gap-2">
+        {QUICK_ACTIONS.map((action) => (
+          <button
+            key={action.label}
+            type="button"
+            onClick={() => navigate(action.to, action.state ? { state: action.state } : undefined)}
+            className="flex cursor-pointer items-center gap-2 rounded-full border-2 border-brand-200 bg-surface px-4 py-2 text-sm font-semibold text-brand-700 transition hover:border-brand-500 hover:bg-brand-50"
+          >
+            <span aria-hidden="true">{action.icon}</span>
+            {action.label}
+          </button>
+        ))}
       </div>
 
       <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
@@ -110,48 +151,46 @@ export default function CustomerOverview() {
       )}
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+        <Card title="Claims Breakdown">
+          {claims.length === 0 ? (
+            <p className="text-brand-400">No claims submitted yet</p>
+          ) : (
+            <div className="mx-auto max-w-[220px]">
+              <Doughnut
+                data={claimsChartData}
+                options={{ plugins: { legend: { position: "bottom", labels: { boxWidth: 10 } } } }}
+              />
+            </div>
+          )}
+        </Card>
+
         <Card
-          title="Recent Claims"
+          title="Upcoming Premiums"
           action={
             <button
               type="button"
               className="cursor-pointer text-sm font-semibold text-brand-600 hover:text-brand-800 hover:underline"
-              onClick={() => navigate("/my-claims")}
+              onClick={() => navigate("/my-premiums")}
             >
               View all →
             </button>
           }
         >
-          {recentClaims.length === 0 ? (
-            <p className="text-brand-400">No claims submitted yet</p>
+          {upcomingPremiums.length === 0 ? (
+            <p className="text-brand-400">No pending payments — you're all caught up.</p>
           ) : (
             <div className="space-y-3">
-              {recentClaims.map((c) => (
-                <div key={c.id} className="flex items-center justify-between border-b border-brand-50 pb-2">
+              {upcomingPremiums.map((p) => (
+                <div key={p.id} className="flex items-center justify-between border-b border-surface-border pb-2">
                   <div>
-                    <p className="font-medium text-brand-900">{c.claim_amount}</p>
-                    <p className="text-xs text-brand-500">{new Date(c.submission_date).toLocaleDateString()}</p>
+                    <p className="font-medium text-brand-900">₹{p.amount}</p>
+                    <p className="text-xs text-brand-500">Due {new Date(p.due_date).toLocaleDateString()}</p>
                   </div>
-                  <Badge status={c.status} />
+                  <Badge status={p.payment_status} />
                 </div>
               ))}
             </div>
           )}
-        </Card>
-
-        <Card title="Quick Actions">
-          <div className="grid grid-cols-2 gap-3">
-            <Button variant="secondary" onClick={() => navigate("/my-policies")}>
-              View Policies
-            </Button>
-            <Button variant="secondary" onClick={() => navigate("/my-claims", { state: { openForm: true } })}>
-              Submit Claim
-            </Button>
-            <Button variant="secondary" onClick={() => navigate("/my-premiums")}>
-              Pay Premium
-            </Button>
-            <Button onClick={() => navigate("/my-documents")}>Upload Document</Button>
-          </div>
         </Card>
       </div>
     </div>
