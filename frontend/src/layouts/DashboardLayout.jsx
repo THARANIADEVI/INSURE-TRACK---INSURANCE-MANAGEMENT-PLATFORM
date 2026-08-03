@@ -5,38 +5,38 @@ import ThemeToggle from "../components/ThemeToggle";
 
 const NAV_BY_ROLE = {
   admin: [
-    { to: "/dashboard", label: "Dashboard" },
-    { to: "/customers", label: "Customers" },
-    { to: "/policies", label: "Policies" },
-    { to: "/policies/expiring", label: "Expiring Policies" },
-    { to: "/premiums", label: "Premiums" },
-    { to: "/claims", label: "Claims" },
-    { to: "/notifications", label: "Notifications" },
-    { to: "/notifications/all", label: "All Notifications" },
-    { to: "/reports", label: "Reports" },
-    { to: "/audit-logs", label: "Audit Logs" },
-    { to: "/employees", label: "Employees" },
-    { to: "/settings", label: "Settings" },
+    { to: "/dashboard", label: "Dashboard", icon: "📊" },
+    { to: "/customers", label: "Customers", icon: "👥" },
+    { to: "/policies", label: "Policies", icon: "📄" },
+    { to: "/policies/expiring", label: "Expiring Policies", icon: "⏰" },
+    { to: "/premiums", label: "Premiums", icon: "💰" },
+    { to: "/claims", label: "Claims", icon: "📝" },
+    { to: "/notifications", label: "Notifications", icon: "🔔" },
+    { to: "/notifications/all", label: "All Notifications", icon: "📬" },
+    { to: "/reports", label: "Reports", icon: "📈" },
+    { to: "/audit-logs", label: "Audit Logs", icon: "🗂️" },
+    { to: "/employees", label: "Employees", icon: "🧑‍💼" },
+    { to: "/settings", label: "Settings", icon: "⚙️" },
   ],
   agent: [
-    { to: "/dashboard", label: "Dashboard" },
-    { to: "/customers", label: "Customers" },
-    { to: "/policies", label: "Policies" },
-    { to: "/policies/expiring", label: "Expiring Policies" },
-    { to: "/premiums", label: "Premiums" },
-    { to: "/claims", label: "Claims" },
-    { to: "/notifications", label: "Notifications" },
-    { to: "/notifications/all", label: "All Notifications" },
-    { to: "/reports", label: "Reports" },
+    { to: "/dashboard", label: "Dashboard", icon: "📊" },
+    { to: "/customers", label: "Customers", icon: "👥" },
+    { to: "/policies", label: "Policies", icon: "📄" },
+    { to: "/policies/expiring", label: "Expiring Policies", icon: "⏰" },
+    { to: "/premiums", label: "Premiums", icon: "💰" },
+    { to: "/claims", label: "Claims", icon: "📝" },
+    { to: "/notifications", label: "Notifications", icon: "🔔" },
+    { to: "/notifications/all", label: "All Notifications", icon: "📬" },
+    { to: "/reports", label: "Reports", icon: "📈" },
   ],
   customer: [
-    { to: "/my-dashboard", label: "Dashboard" },
-    { to: "/my-profile", label: "My Profile" },
-    { to: "/my-policies", label: "My Policies" },
-    { to: "/my-premiums", label: "My Premiums" },
-    { to: "/my-claims", label: "My Claims" },
-    { to: "/my-documents", label: "My Documents" },
-    { to: "/notifications", label: "Notifications" },
+    { to: "/my-dashboard", label: "Dashboard", icon: "📊" },
+    { to: "/my-profile", label: "My Profile", icon: "🙍" },
+    { to: "/my-policies", label: "My Policies", icon: "📄" },
+    { to: "/my-premiums", label: "My Premiums", icon: "💰" },
+    { to: "/my-claims", label: "My Claims", icon: "📝" },
+    { to: "/my-documents", label: "My Documents", icon: "📁" },
+    { to: "/notifications", label: "Notifications", icon: "🔔" },
   ],
 };
 
@@ -47,9 +47,14 @@ export default function DashboardLayout() {
   return (
     <div className="flex min-h-screen bg-offwhite">
       <aside className="w-64 shrink-0 border-r border-surface-border bg-surface">
-        <div className="border-b border-surface-border px-6 py-5">
-          <h1 className="text-lg font-bold text-brand-700">Insurance MP</h1>
-          <p className="text-xs text-brand-500">Management Platform</p>
+        <div className="flex items-center gap-3 border-b border-surface-border px-6 py-5">
+          <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-brand-500 to-brand-700 font-heading text-sm font-bold text-white">
+            IT
+          </span>
+          <div>
+            <h1 className="font-heading text-lg font-bold leading-tight text-brand-700">InsureTrack</h1>
+            <p className="text-xs text-brand-500">Management Platform</p>
+          </div>
         </div>
         <nav className="flex flex-col gap-1 p-3">
           {links.map((link) => (
@@ -57,11 +62,14 @@ export default function DashboardLayout() {
               key={link.to}
               to={link.to}
               className={({ isActive }) =>
-                `rounded-lg px-4 py-2 text-sm font-medium transition ${
-                  isActive ? "bg-brand-600 text-white" : "text-brand-800 hover:bg-brand-50"
+                `flex items-center gap-2 rounded-lg border-l-4 px-4 py-2 text-sm font-medium transition ${
+                  isActive
+                    ? "border-brand-600 bg-brand-50 text-brand-700"
+                    : "border-transparent text-brand-800 hover:bg-brand-50"
                 }`
               }
             >
+              <span aria-hidden="true">{link.icon}</span>
               {link.label}
             </NavLink>
           ))}

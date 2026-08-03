@@ -31,7 +31,12 @@ export default function Login() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-offwhite px-4">
       <div className="w-full max-w-sm rounded-xl border border-surface-border bg-surface p-8 shadow-sm">
-        <h1 className="mb-1 text-2xl font-bold text-brand-700">Insurance MP</h1>
+        <div className="mb-1 flex items-center gap-3">
+          <span className="flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-br from-brand-500 to-brand-700 font-heading text-lg font-bold text-white">
+            IT
+          </span>
+          <h1 className="font-heading text-2xl font-bold text-brand-700">InsureTrack</h1>
+        </div>
         <p className="mb-6 text-sm text-brand-500">Log in to your account</p>
 
         <form onSubmit={handleSubmit}>
