@@ -67,14 +67,33 @@ export default function CustomerOverview() {
       </div>
 
       <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
-        <div className="rounded-xl bg-brand-600 p-5 text-white shadow-sm">
+        <button
+          type="button"
+          onClick={() => navigate("/my-policies")}
+          className="cursor-pointer rounded-xl bg-brand-600 p-5 text-left text-white shadow-sm transition hover:bg-brand-700"
+        >
           <p className="text-xs font-semibold uppercase tracking-wide text-brand-100">Active Policies</p>
           <p className="mt-1 text-3xl font-bold">{activePolicies}</p>
           <p className="mt-1 text-xs text-brand-100">{policies.length} total</p>
-        </div>
-        <StatCard label="Pending Claims" value={pendingClaims} sub={`${claims.length} total`} />
-        <StatCard label="Overdue Premiums" value={overduePremiums} sub={`${premiums.length} total`} />
-        <StatCard label="Documents Pending Review" value={pendingDocuments} sub={`${documents.length} total`} />
+        </button>
+        <StatCard
+          label="Pending Claims"
+          value={pendingClaims}
+          sub={`${claims.length} total`}
+          onClick={() => navigate("/my-claims")}
+        />
+        <StatCard
+          label="Overdue Premiums"
+          value={overduePremiums}
+          sub={`${premiums.length} total`}
+          onClick={() => navigate("/my-premiums")}
+        />
+        <StatCard
+          label="Documents Pending Review"
+          value={pendingDocuments}
+          sub={`${documents.length} total`}
+          onClick={() => navigate("/my-documents")}
+        />
       </div>
 
       {overduePremiums > 0 && (
@@ -139,12 +158,16 @@ export default function CustomerOverview() {
   );
 }
 
-function StatCard({ label, value, sub }) {
+function StatCard({ label, value, sub, onClick }) {
   return (
-    <div className="rounded-xl border border-surface-border bg-surface p-5 shadow-sm">
+    <button
+      type="button"
+      onClick={onClick}
+      className="cursor-pointer rounded-xl border border-surface-border bg-surface p-5 text-left shadow-sm transition hover:border-brand-300 hover:shadow-md"
+    >
       <p className="text-xs font-semibold uppercase tracking-wide text-brand-500">{label}</p>
       <p className="mt-1 text-3xl font-bold text-brand-900">{value}</p>
       {sub && <p className="mt-1 text-xs text-brand-400">{sub}</p>}
-    </div>
+    </button>
   );
 }
