@@ -11,6 +11,7 @@ export default function Login() {
   const [form, setForm] = useState({ email: "", password: "" });
   const [error, setError] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -44,12 +45,20 @@ export default function Login() {
           </FormField>
           <FormField label="Password">
             <Input
-              type="password"
+              type={showPassword ? "text" : "password"}
               required
               value={form.password}
               onChange={(e) => setForm({ ...form, password: e.target.value })}
             />
           </FormField>
+          <label className="mb-3 flex items-center gap-2 text-sm text-brand-600">
+            <input
+              type="checkbox"
+              checked={showPassword}
+              onChange={(e) => setShowPassword(e.target.checked)}
+            />
+            Show password
+          </label>
 
           {error && <p className="mb-3 text-sm text-rose-600">{error}</p>}
 
